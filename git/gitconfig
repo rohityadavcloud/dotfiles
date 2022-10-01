@@ -1,0 +1,72 @@
+[user]
+  name = Rohit Yadav
+  email = rohit.yadav@shapeblue.com
+  signingkey = 0EE3D884
+
+#[credential]
+#  helper = /usr/share/doc/git/contrib/credential/gnome-keyring/git-credential-gnome-keyring
+
+[core]
+#  gitproxy = gitproxy
+  autocrlf = input
+  whitespace = trailing-space,space-before-tab
+  excludesfile = ~/.gitignore
+  editor = vim
+  ignorecase = false
+
+[color]
+  diff = auto
+  status = auto
+  branch = auto
+  ui = true
+
+[apply]
+  whitespace = fix
+
+[commit]
+  template = ~/.gitmessage
+
+[alias]
+  a = add -p
+  c = commit -s
+  p = pull --rebase -v origin master
+  st = status
+  stb = status -sb
+  br = branch
+  co = checkout
+  cp = cherry-pick -x -s
+  df = diff --color
+  dc = diff --cached --color
+  lg = log -p --show-signature
+  hist = log --graph --pretty='format:%C(red)%d%C(reset) %C(yellow)%h%C(reset) %ar %C(green)%aN%C(reset) %s'
+  rank = shortlog -sn --no-merges
+  rankp = !sh -c "pwd | git log --format='%aN' | sort | uniq -c | sort -gr | awk -v CONVFMT=%.4g '{\"git log --format='%aE' | wc -l\"|getline COMMITS}; {print $0 \" (\" ($1 * 100 / COMMITS) \"%)\"}' | more"
+  rankdomain = !sh -c "pwd | git log --format='%aE' | cut -d '@' -f 2 | sort | uniq -c | sort -gr | awk -v CONVFMT=%.4g '{\"git log --format='%aE' | wc -l\"|getline COMMITS}; {print $0 \" (\" ($1 * 100 / COMMITS) \"%)\"}' | more"
+  rankdomainsincegraduation = !sh -c "pwd | git log --format='%aE' --after={2013-03-20} | cut -d '@' -f 2 | sort | uniq -c | sort -gr | awk -v CONVFMT=%.4g '{\"git log --format='%aE' --after={2013-03-20} | wc -l\"|getline COMMITS}; {print $0 \" (\" ($1 * 100 / COMMITS) \"%)\"}' | more"
+
+[format]
+  signoff = true
+
+[reviewboard]
+  url = https://reviews.apache.org
+
+[giggle]
+  main-window-maximized = false
+  main-window-geometry = 793x741+170+86
+  history-view-vpane-position = 435
+  main-window-view = HistoryView
+  file-view-vpane-position = 674
+
+[sendemail]
+# smtpserver = /usr/bin/msmtp #smtp.gmail.com
+# smtpserverport = 587
+# smtpencryption = tls
+# smtpuser = rohityadav89@gmail.com
+
+#[filter "tabspace"]
+# smudge = expand -t 4
+# clean = expand -t 4
+[gpg]
+	program = gpg
+[init]
+	defaultBranch = main

@@ -1,0 +1,13 @@
+
+#Header: one line explaination
+#
+#Body of commit message explaining things in more detail, possibly giving some
+#background about the issue being fixed, etc. Maybe use bullets:
+#  - Write in present tense
+#  - Keep text width of commit message within 80 characters.
+#
+#Use more than one paragraphs, that's is fine.
+#
+#Reviewed-by: Person or link to review on review.apache.org
+#Reported-by: whoever-reported-it, if applicable
+#Signed-off-by: Your Name <youremail@yourhost.com>

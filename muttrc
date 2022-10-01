@@ -1,0 +1,40 @@
+set imap_pass = ""
+set smtp_pass = ""
+set from = "bhaisaab@baagi.org"
+set use_from = yes
+set realname = "Rohit Yadav"
+set imap_user = "bhaisaab"
+set smtp_url = "smtp://bhaisaab@baagi.org:587/"
+
+set ssl_starttls=yes
+set ssl_force_tls = yes
+
+set editor = "vim"
+
+# Basic config, you can leave this as is
+set folder = "imaps://x32.in:993"
+set spoolfile = "+INBOX"
+set imap_check_subscribed
+set hostname = x32.in
+set mail_check = 120
+set timeout = 300
+set imap_keepalive = 300
+set record = "+Sent"
+set header_cache=~/.mutt/cache/headers
+set message_cachedir=~/.mutt/cache/bodies
+set certificate_file=~/.mutt/certificates
+set move = no
+set include
+set sort = 'threads'
+set sort_aux = 'reverse-last-date-received'
+set auto_tag = yes
+ignore "Authentication-Results:"
+ignore "DomainKey-Signature:"
+ignore "DKIM-Signature:"
+hdr_order Date From To Cc
+alternative_order text/plain text/html *
+auto_view text/html
+bind editor <Tab> complete-query
+bind editor ^T complete
+bind editor <space> noop
+

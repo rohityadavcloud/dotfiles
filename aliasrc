@@ -1,0 +1,113 @@
+sshhome() { ssh -Cv -p 1009 -v pi@573.yadav.xyz; }
+
+### Git helpers
+
+pull() {
+  set -x;
+  branch=master;
+  if [[ ! -z "$1" ]]; then
+    branch=$1;
+  fi
+  git pull --rebase origin $branch;
+}
+
+push() {
+  set -x;
+  branch=master;
+  if [[ ! -z "$1" ]]; then
+    branch=$1;
+  fi
+  git push origin $branch;
+}
+
+### CloudStack hacks
+
+# mariadb 10 on ubuntu:
+#   https://laracasts.com/discuss/channels/general-discussion/cant-connect-to-local-mysql-server-through-socket-varrunmysqldmysqldsock-2-connection-refused
+#   echo "/usr/sbin/mysqld { }" > /etc/apparmor.d/usr.sbin.mysqld
+#   apparmor_parser -v -R /etc/apparmor.d/usr.sbin.mysqld
+#   systemctl restart mariadb
+# ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '';
+dumpdb() {
+  set -x
+  mysqldump -u root  cloud > cloud.sql
+  mysqldump -u root  cloud_usage > cloud_usage.sql
+  mysqldump -u root  simulator > simulator.sql
+  #mysqldump -u root  cloudbridge > cloudbridge.sql
+}
+
+loaddb() {
+  set -x
+  mysql -u root cloud < cloud.sql
+  mysql -u root cloud_usage < cloud_usage.sql
+  #mysql -u root cloudbridge < cloudbridge.sql
+}
+
+### VPN, socks
+
+runsocksproxy() {
+    ssh -D 2005 -f -C -v -N root@hydra.yadav.xyz
+}
+
+### Backup methods
+
+backupnow() { echo "Launching secret backup program"; bash -x ~/bin/backup.sh; }
+
+encrypt() {
+  # $1 is filename
+  gpg -c $1
+}
+
+decrypt() {
+  # $1 is password, $2 is filename
+  echo $1 | gpg --batch --yes --passphrase-fd 0 $2
+}
+
+### General exports
+
+# Zsh tmux issue fix
+alias tmux='tmux -u'
+
+# Utf8 exports
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+
+# Local apps
+export PATH=$HOME/bin:$HOME/bin/maven/bin:/usr/local/mysql/bin:/opt/homebrew/opt/node@14/bin:$HOME/Library/Python/3.9/bin:$PATH
+
+# osx node pkg compile opts
+export LDFLAGS="-L/opt/homebrew/opt/node@14/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/node@14/include"
+
+# mbx
+export PATH="/export/monkeybox:$PATH"
+
+# Golang exports
+export GOPATH=$HOME/lab/go
+export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
+
+# Maven exports
+export MAVEN_OPTS="-Xmx4096m -Xdebug -Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=n"
+
+# Jenv : jenv enable-plugin maven
+export PATH="$HOME/.jenv/bin:$PATH"
+eval "$(jenv init -)"
+
+# Pyenv
+export PATH="$PATH:/Users/rohit/.pyenv/versions/2.7.18/bin"
+#export PATH="$HOME/.pyenv/bin:$PATH"
+#eval "$(pyenv init -)"
+#eval "$(pyenv virtualenv-init -)"
+
+export PATH="/opt/homebrew/opt/openjdk@11/bin:$PATH"
+export CPPFLAGS="-I/opt/homebrew/opt/openjdk@11/include"
+
+export QT_AUTO_SCREEN_SCALE_FACTOR=1
+
+# GPG setup for SSH auth
+gpg --card-status 2>/dev/null || true
+export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
+gpgconf --launch gpg-agent
+gpg-connect-agent /bye
+export GPG_TTY=$(tty)
+
