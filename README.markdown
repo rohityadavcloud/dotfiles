@@ -1,6 +1,6 @@
 Installation
 
-    git clone git://github.com/bhaisaab/dotfiles.git
+    git clone git://github.com/rohityadavcloud/dotfiles.git
     git clone https://github.com/ohmyzsh/ohmyzsh.git  ~/.oh-my-zsh
 
 Create symlinks: (export SRC_ROOT=$PWD)
