@@ -4,7 +4,7 @@ sshhome() { ssh -Cv -p 1009 -v pi@573.yadav.xyz; }
 
 pull() {
   set -x;
-  branch=master;
+  branch=main;
   if [[ ! -z "$1" ]]; then
     branch=$1;
   fi
@@ -51,7 +51,11 @@ runsocksproxy() {
 
 ### Backup methods
 
-backupnow() { echo "Launching secret backup program"; bash -x ~/bin/backup.sh; }
+backupnow() {
+  set -x
+  rsync -avP --delete-after /Users/rohit/Documents/ ghost:/cephfs/rohit/Documents/
+  set +x
+}
 
 encrypt() {
   # $1 is filename
@@ -65,6 +69,15 @@ decrypt() {
   echo $password | gpg --batch --yes --passphrase-fd 0 $1
 }
 
+prepscale() {
+  sudo sysctl kern.maxfiles=10000000 kern.maxfilesperproc=10000000
+  sysctl -a | grep maxfiles
+  sudo sysctl kern.num_threads=1000000 kern.num_taskthreads=1000000
+  sysctl -a | grep num_t
+  ulimit -Hn 5000000
+  ulimit -Sn 5000000
+}
+
 ### General exports
 
 # Zsh tmux issue fix
@@ -75,11 +88,13 @@ export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
 # Local apps
-export PATH=$HOME/bin:$HOME/bin/maven/bin:/usr/local/mysql/bin:/opt/homebrew/opt/node@14/bin:$HOME/Library/Python/3.9/bin:$PATH
+export PATH=$HOME/bin:$HOME/bin/maven/bin:/usr/local/mysql/bin:$HOME/Library/Python/3.9/bin:$PATH
 
 # osx node pkg compile opts
-export LDFLAGS="-L/opt/homebrew/opt/node@14/lib"
-export CPPFLAGS="-I/opt/homebrew/opt/node@14/include"
+export LDFLAGS="-L/opt/homebrew/opt/node@16/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/node@16/include"
+export PATH="/opt/homebrew/opt/node@18/bin:$PATH"
+export NODE_OPTIONS=--openssl-legacy-provider
 
 # mbx
 export PATH="/export/monkeybox:$PATH"
@@ -89,20 +104,27 @@ export GOPATH=$HOME/lab/go
 export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
 
 # Maven exports
-export MAVEN_OPTS="-Xmx4096m -Xdebug -Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=n"
+export MAVEN_OPTS="-Xms2048m -Xmx16384m -Xdebug -Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=n"
+
+# JDK17:
+#export MAVEN_OPTS="-Xmx4096m -XX:MaxMetaspaceSize=800m -Djava.security.egd=file:/dev/urandom --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-exports=java.base/sun.security.x509=ALL-UNNAMED --add-opens=java.base/jdk.internal.reflect=ALL-UNNAMED"
 
 # Jenv : jenv enable-plugin maven
 export PATH="$HOME/.jenv/bin:$PATH"
 eval "$(jenv init -)"
 
 # Pyenv
-export PATH="$PATH:/Users/rohit/.pyenv/versions/2.7.18/bin"
+export PATH="/opt/homebrew/opt/python@3.10/bin:$PATH"
+#export PATH="$PATH:/Users/rohit/.pyenv/versions/2.7.18/bin"
 #export PATH="$HOME/.pyenv/bin:$PATH"
 #eval "$(pyenv init -)"
 #eval "$(pyenv virtualenv-init -)"
 
-export PATH="/opt/homebrew/opt/openjdk@11/bin:$PATH"
-export CPPFLAGS="-I/opt/homebrew/opt/openjdk@11/include"
+export JAVA_HOME=/opt/homebrew/opt/openjdk@11 #17
+#export PATH="/opt/homebrew/opt/openjdk@11/bin:/opt/homebrew/opt/python@3.8/libexec/bin:$PATH"
+#export CPPFLAGS="-I/opt/homebrew/opt/openjdk@11/include"
+
+#export PATH="/opt/homebrew/opt/openjdk@17/bin:$PATH"
 
 export QT_AUTO_SCREEN_SCALE_FACTOR=1
 
